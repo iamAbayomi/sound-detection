@@ -1,8 +1,10 @@
 import librosa
 import numpy as np
 import matplotlib.pyplot as plt
+import random
 
 def compare_sound_files(file1, file2, threshold=0.1):
+    num = random.randint(1,19)
     # Load sound files
     y1, sr1 = librosa.load(file1)
     y2, sr2 = librosa.load(file2)
@@ -26,6 +28,7 @@ def compare_sound_files(file1, file2, threshold=0.1):
     librosa.display.specshow(librosa.power_to_db(S2, ref=np.max), sr=sr2)
     plt.colorbar(format='%+2.0f dB')
     plt.title('Spectrogram File 2')
+    plt.savefig(f'./recorded_sounds//images/trial{num}.png')
 
     # Extract and compare features
     mfcc1 = librosa.feature.mfcc(y=y1, sr=sr1)
@@ -43,6 +46,6 @@ def compare_sound_files(file1, file2, threshold=0.1):
     plt.show()
 
 # Example usage
-file1 = './recorded_sounds/recorded_sound.wav'
-file2 = './recorded_sounds/recorded_sound1.wav'
+file1 = './recorded_sounds/recorded_soun3d.wav'
+file2 = './recorded_sounds/recorded_soun4d.wav'
 compare_sound_files(file1, file2)

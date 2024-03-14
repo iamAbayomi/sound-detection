@@ -2,7 +2,7 @@ import sounddevice as sd
 import soundfile as sf
 
 # Parameters for recording audio
-duration = 5  # Duration of recording in seconds
+duration = 2  # Duration of recording in seconds
 sample_rate = 44100  # Sampling rate
 channels = 1  # Mono audio
 
@@ -19,7 +19,7 @@ audio_data = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channel
 sd.wait()
 
 # Save the recorded audio to a WAV file
-file_name = "recorded_sound.wav"
+file_name = "recorded_soun4d.wav"
 sf.write(file_name, audio_data, sample_rate)
 
 # Write the action associated with the recorded sound to a text file
