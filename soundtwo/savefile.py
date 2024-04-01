@@ -1,10 +1,22 @@
 import sounddevice as sd
 import soundfile as sf
+import os  # Import the os module to work with file paths
+from random import randint
 
 # Parameters for recording audio
 duration = 2  # Duration of recording in seconds
 sample_rate = 44100  # Sampling rate
 channels = 1  # Mono audio
+
+num = randint(1,100)
+
+print("num ", num)
+
+# Specify the directory where you want to save the recorded file
+save_dir = "./data/recorded_sounds/" 
+
+# Ensure the specified directory exists, create it if necessary
+os.makedirs(save_dir, exist_ok=True)
 
 # Dictionary to store actions associated with recorded sounds
 actions = {
@@ -18,8 +30,9 @@ print(f"Recording for {duration} seconds...")
 audio_data = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=channels, dtype='float32')
 sd.wait()
 
-# Save the recorded audio to a WAV file
-file_name = "recorded_soun4d.wav"
+# Construct the full file path including the directory and file name
+file_name = os.path.join(save_dir, "lala.wav")
+
 sf.write(file_name, audio_data, sample_rate)
 
 # Write the action associated with the recorded sound to a text file

@@ -11,12 +11,11 @@ def extract_features(audio_file):
     zero_crossings = np.sum(librosa.zero_crossings(y))
     duration = librosa.get_duration(y=y, sr=sr)
     max_amplitude = np.max(np.abs(y))
-    print("energy ", energy, " zero crossings ", zero_crossings, " duration ", duration , " max_amplitude ", max_amplitude)
     return [energy, zero_crossings, duration, max_amplitude]
 
 # Sample tap and non-tap audio files
-tap_file = './recorded_sounds/recorded_soun3d.wav'
-nontap_file = './recorded_sounds/nontap_sound.wav'
+tap_file = './data/recorded_sounds/tap.wav'
+nontap_file = './data/recorded_sounds/nosound.wav'
 
 # Extract features from tap and non-tap audio files
 tap_features = extract_features(tap_file)
@@ -32,6 +31,8 @@ clf.fit(X_train, y_train)
 # Predict classes for test samples
 y_pred = clf.predict(X_test)
 
+print(f'tap_features', tap_features, 'nontap_features',nontap_features ,'ypred', y_pred)
+
 # Evaluate classifier performance
 accuracy = accuracy_score(y_test, y_pred)
 print(f'Accuracy: {accuracy}')
@@ -40,9 +41,14 @@ print(f'Accuracy: {accuracy}')
 threshold = 0.5
 
 # Classify a new audio sample
-new_audio_file = './recorded_sounds/nontap_sound.wav'
+new_audio_file = './data/recorded_sounds/tap2.wav'
 new_features = extract_features(new_audio_file)
 prediction = clf.predict([new_features])[0]
+
+
+print(f'tap_features', tap_features, 'nontap_features',nontap_features ,'ypred', y_pred, ' new_features ', new_features)
+
+
 if prediction == 'tap' and clf.predict_proba([new_features])[0][0] > threshold:
     print('Tap sound detected!')
 else:

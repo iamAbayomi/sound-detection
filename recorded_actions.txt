@@ -11,3 +11,13 @@ Sound file: recorded_soun1d.wav, Action: No action
 Sound file: recorded_soun3d.wav, Action: Unknown action
 Sound file: recorded_soun3d.wav, Action: Unknown action
 Sound file: recorded_soun4d.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/recorded_sound.wav, Action: No action
+Sound file: ./data/recorded_sounds/recorded_sound.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/tap.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/snap.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/snap.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/clap.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/nosound.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/lala.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/lala.wav, Action: Unknown action
+Sound file: ./data/recorded_sounds/lala.wav, Action: Unknown action

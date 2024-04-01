@@ -9,6 +9,7 @@ def compare_sound_files(file1, file2, threshold=0.1):
     y1, sr1 = librosa.load(file1)
     y2, sr2 = librosa.load(file2)
 
+   
     # Plot waveforms
     plt.figure(figsize=(10, 6))
     plt.subplot(2, 1, 1)
