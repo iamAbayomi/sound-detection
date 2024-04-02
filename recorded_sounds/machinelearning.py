@@ -41,13 +41,14 @@ print(f'Accuracy: {accuracy}')
 threshold = 0.5
 
 # Classify a new audio sample
-new_audio_file = './data/recorded_sounds/tap2.wav'
+new_audio_file = './data/recorded_sounds/lala.wav'
 new_features = extract_features(new_audio_file)
 prediction = clf.predict([new_features])[0]
 
 
 print(f'tap_features', tap_features, 'nontap_features',nontap_features ,'ypred', y_pred, ' new_features ', new_features)
 
+print("predict prob ", clf.predict_proba([new_features]))
 
 if prediction == 'tap' and clf.predict_proba([new_features])[0][0] > threshold:
     print('Tap sound detected!')
