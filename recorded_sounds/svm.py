@@ -37,6 +37,9 @@ nontap_files = [os.path.join(nontap_dir, file) for file in os.listdir(nontap_dir
 tap_features, tap_labels = extract_features_from_files(tap_files, 'tap')
 nontap_features, nontap_labels = extract_features_from_files(nontap_files, 'nontap')
 
+#  print(" tap_features ", tap_features)
+#  print(" nontap_features ", nontap_features)
+
 # Concatenate tap and non-tap features and labels
 X = tap_features + nontap_features
 y = tap_labels + nontap_labels
@@ -65,8 +68,8 @@ prediction = clf.predict([new_features])[0]
 
 
 print("prediction ", prediction)
+print("new features ", new_features)
 print("predict prob ", clf.predict_proba([new_features])[0])
-
 print("predict prob ", clf.predict_proba([new_features])[0][1])
 
 if prediction == 'tap' and clf.predict_proba([new_features])[0][0] > threshold:
