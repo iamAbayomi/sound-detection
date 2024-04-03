@@ -1,3 +1,4 @@
+import webbrowser
 import librosa
 import numpy as np
 import sounddevice as sd
@@ -6,6 +7,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import os
+import subprocess
 
 
 def generate_num_sound(file_name):
@@ -130,14 +132,65 @@ def classify_and_execute(audio_file, model):
     # Perform action based on tap and clap counts
     if tap_count > 0:
         print(f'{tap_count} tap(s) detected! Performing action for taps...')
+        determineActionForTaps(tap_count)
         # Code to perform action for tap sound (e.g., open application)
     if clap_count > 0:
         print(f'{clap_count} clap(s) detected! Performing action for claps...')
+        determineActionForClaps(clap_count)
         # Code to perform action for clap sound
     if tap_count == 0 and clap_count == 0:
         print('No tap or clap sound detected.')
 
+def determineActionForClaps(clap_count):
+    if clap_count == 1:
+        # Code to call emergency number
+        print("Calling emergency number")
+        emergency_number = "tel:911"  # Change this to your local emergency number
+        webbrowser.open(emergency_number)
+    elif clap_count == 2:
+        # Call to open the browser
+        webbrowser.open('https://www.google.com')
+    elif clap_count == 3:
+        # Code to read the daily news
+        webbrowser.open('https://www.independent.ie')
+    elif clap_count == 4:
+        # Command to open the screen reader on macOS
+        screen_reader_command = "open -a VoiceOver"
+        # Execute the command to open the screen reader
+        subprocess.Popen(screen_reader_command, shell=True)
+    elif clap_count == 5:
+        # Code to turn on the default music player
+        # Command to open the default music player on macOS
+        music_player_command = "open -a Music"
+        # Execute the command to open the default music player
+        subprocess.Popen(music_player_command, shell=True)
+        pass
 
+
+def determineActionForTaps(tap_count):
+    if tap_count == 1:
+        print("Open Siri")
+        # Open Siri
+        subprocess.run(['open', '-a', 'Siri'])
+    elif tap_count == 2:
+        print("Open email client")
+        # Open default email client
+        subprocess.run(['open', 'mailto:'])
+    elif tap_count == 3:
+        print("Take a screenshot")
+        # Take a screenshot
+        subprocess.run(['screencapture', 'screenshot.png'])
+    elif tap_count == 4:
+        print("Open the calendar")
+        # Open Calendar app
+        subprocess.run(['open', '-a', 'Calendar'])
+    elif tap_count == 5:
+        print("Lock the computer")
+        # Lock the computer
+        subprocess.run(['pmset', 'displaysleepnow'])
+
+
+    
 # Paths to the directory containing training data and the new sound to classify
 data_dir = './data/'
 
