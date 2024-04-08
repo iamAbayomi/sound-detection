@@ -54,14 +54,14 @@ def load_data(data_dir):
             X.append(features)
             y.append("clap")
 
-    # Iterate over each audio file in the tap_sounds directory
-    tap_dir = os.path.join(data_dir, "tap_sounds")
-    for filename in os.listdir(tap_dir):
+    # Iterate over each audio file in the snap_sounds directory
+    snap_dir = os.path.join(data_dir, "snap_sounds")
+    for filename in os.listdir(snap_dir):
         if filename.endswith(".wav"):
-            audio_file = os.path.join(tap_dir, filename)
+            audio_file = os.path.join(snap_dir, filename)
             features = extract_features(audio_file)
             X.append(features)
-            y.append("tap")
+            y.append("snap")
 
     # Iterate over each audio file in the no sounds directory
     no_dir = os.path.join(data_dir, "no_sounds")
@@ -93,14 +93,14 @@ def train_model(data_dir):
 
     return clf
 
-# Function to classify a new sound and count the number of taps or claps
-def count_taps_or_claps(audio_file, model):
+# Function to classify a new sound and count the number of snaps or claps
+def count_snaps_or_claps(audio_file, model):
     # Extract features from the new sound
     features = extract_features(audio_file)
     # Predict class using the trained model
     prediction = model.predict([features])[0]
-    # Initialize tap and clap counts
-    tap_count = 0
+    # Initialize snap and clap counts
+    snap_count = 0
     clap_count = 0
     # Load the audio waveform
     y, sr = librosa.load(audio_file)
@@ -117,34 +117,34 @@ def count_taps_or_claps(audio_file, model):
         peak_features = [energy, zero_crossings, duration, max_amplitude] = extract_features(audio_file)
         # Predict class using the trained model
         peak_prediction = model.predict([peak_features])[0]
-        # Increment tap or clap count based on the predicted class
-        if peak_prediction == 'tap':
-            tap_count += 1
+        # Increment snap or clap count based on the predicted class
+        if peak_prediction == 'snap':
+            snap_count += 1
         elif peak_prediction == 'clap':
             clap_count += 1
-    return tap_count, clap_count
+    return snap_count, clap_count
 
 
 # Function to classify a new sound and perform corresponding action
 def classify_and_execute(audio_file, model):
-    # Count taps or claps
-    tap_count, clap_count = count_taps_or_claps(audio_file, model)
-    # Perform action based on tap and clap counts
-    if tap_count > 0:
-        print(f'{tap_count} tap(s) detected! Performing action for taps...')
-        determineActionForTaps(tap_count)
-        # Code to perform action for tap sound (e.g., open application)
+    # Count snaps or claps
+    snap_count, clap_count = count_snaps_or_claps(audio_file, model)
+    # Perform action based on snap and clap counts
+    if snap_count > 0:
+        print(f'{snap_count} snap(s) detected! Performing action for snaps...')
+        determineActionForsnaps(snap_count)
+        # Code to perform action for snap sound (e.g., open application)
     if clap_count > 0:
         print(f'{clap_count} clap(s) detected! Performing action for claps...')
         determineActionForClaps(clap_count)
         # Code to perform action for clap sound
-    if tap_count == 0 and clap_count == 0:
-        print('No tap or clap sound detected.')
+    if snap_count == 0 and clap_count == 0:
+        print('No snap or clap sound detected.')
 
 def determineActionForClaps(clap_count):
     if clap_count == 1:
         # Code to call emergency number
-        print("Calling emergency number")
+        print("Calling Emergency Number")
         emergency_number = "tel:911"  # Change this to your local emergency number
         webbrowser.open(emergency_number)
     elif clap_count == 2:
@@ -159,7 +159,6 @@ def determineActionForClaps(clap_count):
         # Execute the command to open the screen reader
         subprocess.Popen(screen_reader_command, shell=True)
     elif clap_count == 5:
-        # Code to turn on the default music player
         # Command to open the default music player on macOS
         music_player_command = "open -a Music"
         # Execute the command to open the default music player
@@ -167,24 +166,24 @@ def determineActionForClaps(clap_count):
         pass
 
 
-def determineActionForTaps(tap_count):
-    if tap_count == 1:
+def determineActionForsnaps(snap_count):
+    if snap_count == 1:
         print("Open Siri")
         # Open Siri
         subprocess.run(['open', '-a', 'Siri'])
-    elif tap_count == 2:
+    elif snap_count == 2:
         print("Open email client")
         # Open default email client
         subprocess.run(['open', 'mailto:'])
-    elif tap_count == 3:
+    elif snap_count == 3:
         print("Take a screenshot")
         # Take a screenshot
         subprocess.run(['screencapture', 'screenshot.png'])
-    elif tap_count == 4:
+    elif snap_count == 4:
         print("Open the calendar")
         # Open Calendar app
         subprocess.run(['open', '-a', 'Calendar'])
-    elif tap_count == 5:
+    elif snap_count == 5:
         print("Lock the computer")
         # Lock the computer
         subprocess.run(['pmset', 'displaysleepnow'])
