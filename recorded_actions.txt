@@ -22,3 +22,5 @@ Sound file: ./data/recorded_sounds/lala.wav, Action: Unknown action
 Sound file: ./data/recorded_sounds/lala.wav, Action: Unknown action
 Sound file: ./data/recorded_sounds/lala.wav, Action: Unknown action
 Sound file: ./data/recorded_sounds/tap_sounds/tap69.wav, Action: Unknown action
+Sound file: recorded_sound.wav, Action: Unknown action
+Sound file: recorded_sound.wav, Action: Unknown action
