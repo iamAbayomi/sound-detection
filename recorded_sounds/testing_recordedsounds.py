@@ -19,8 +19,8 @@ def compare_sound_files(file1, file2, threshold=0.1):
     plt.legend(['File 1', 'File 2'])
 
     # Compute and plot spectrograms
-    S1 = librosa.feature.melspectrogram(y=y1, sr=sr1)
-    S2 = librosa.feature.melspectrogram(y=y2, sr=sr2)
+    S1 = librosa.feature.melspectrogram(y=y1[10000:20000], sr=sr1, hop_length=128, win_length=256)
+    S2 = librosa.feature.melspectrogram(y=y2[10000:20000], sr=sr2, hop_length=128, win_length=256)
     plt.subplot(2, 2, 3)
     librosa.display.specshow(librosa.power_to_db(S1, ref=np.max), sr=sr1)
     plt.colorbar(format='%+2.0f dB')
@@ -47,6 +47,6 @@ def compare_sound_files(file1, file2, threshold=0.1):
     plt.show()
 
 # Example usage
-file1 = './recorded_sounds/recorded_soun3d.wav'
-file2 = './recorded_sounds/recorded_soun4d.wav'
+file1 = './data/clap_sounds/clap1.wav'
+file2 = './data/tap_sounds/tap2.wav'
 compare_sound_files(file1, file2)

@@ -68,6 +68,15 @@ def load_data(data_dir):
             X.append(features)
             y.append("tap")
 
+    # # Iterate over each audio file in the no_sounds directory
+    # no_dir = os.path.join(data_dir, "no_sounds")
+    # for filename in os.listdir(no_dir):
+    #     if filename.endswith(".wav"):
+    #         audio_file = os.path.join(no_dir, filename)
+    #         features = extract_features(audio_file)
+    #         X.append(features)
+    #         y.append("no_sound")
+
     return X, y
 
 # Train the model

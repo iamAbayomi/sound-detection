@@ -3,7 +3,7 @@ import librosa
 import numpy as np
 import sounddevice as sd
 import soundfile as sf
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import os
@@ -87,12 +87,35 @@ def train_model(data_dir):
     clf = SVC()
     clf.fit(X_train, y_train)
 
+
+    evaluate_model(X_test, y_test, clf)
+
+
     # Evaluate model
     y_pred = clf.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     print(f"Model accuracy: {accuracy}")
 
     return clf
+
+# Function to evaluate model
+def evaluate_model(X_test, y_test, model):
+    # Predict the labels for test data
+    y_pred = model.predict(X_test)
+    # Calculate accuracy
+    accuracy = accuracy_score(y_test, y_pred)
+    # Calculate precision
+    precision = precision_score(y_test, y_pred, average='weighted')
+    # Calculate recall
+    recall = recall_score(y_test, y_pred, average='weighted')
+    # Calculate F1-score
+    f1 = f1_score(y_test, y_pred, average='weighted')
+    
+    # Print the evaluation metrics
+    print("Accuracy:", accuracy)
+    print("Precision:", precision)
+    print("Recall:", recall)
+    print("F1-score:", f1)
 
 # Function to classify a new sound and count the number of snaps or claps
 def count_snaps_or_claps(audio_file, model):
@@ -195,7 +218,7 @@ def determineActionForsnaps(snap_count):
 data_dir = './data/'
 
 # Record a new sound
-duration = 5  # Duration of recording in seconds
+duration = 2  # Duration of recording in seconds
 sample_rate = 44100  # Sampling rate
 channels = 1  # Mono audio
 

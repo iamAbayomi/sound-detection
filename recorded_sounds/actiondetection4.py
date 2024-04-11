@@ -1,27 +1,24 @@
-import webbrowser
 import librosa
 import numpy as np
 import sounddevice as sd
 import soundfile as sf
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import webbrowser
+import subprocess
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 import os
-import subprocess
 
-
-def generate_num_sound(file_name):
+def generate_num_sound(file_path):
     # Generate file name 
-    with open(file_name, "r") as file:
+    with open(file_path, "r") as file:
         current_number = int(file.read().strip())
     # Increase the number and add one to it
     num = current_number + 1
     # Write the new number back to the file
-    with open(file_name, "w") as file:
+    with open(file_path, "w") as file:
         file.write(str(num))
     return num
-
 
 # Function to record sound
 def record_sound(duration, sample_rate, channels, file_name):
@@ -35,13 +32,20 @@ def record_sound(duration, sample_rate, channels, file_name):
 # Function to extract features from audio waveform
 def extract_features(audio_file):
     y, sr = librosa.load(audio_file)
-    # mfcc = librosa.feature.mfcc(y=y, sr=sr, n_fft=65536, win_length=65536, hop_length=len(y))
-    # print(mfcc.shape)
-    energy = np.sum(np.abs(y))
-    zero_crossings = np.sum(librosa.zero_crossings(y))
-    duration = librosa.get_duration(y=y, sr=sr)
-    max_amplitude = np.max(np.abs(y))
-    return [energy, zero_crossings, duration, max_amplitude]
+
+    max_pos = np.argmax(y)
+    # 
+    x_chunk = y[max_pos-512:max_pos+3584]
+
+    n_fft, hop_length,win_length  = 512, 256, 512
+
+    mfcc = librosa.feature.mfcc(y=x_chunk, sr=sr, n_fft=n_fft, hop_length=hop_length, win_length=win_length, n_mfcc=13)
+    
+    # energy = np.sum(np.abs(y))
+    # zero_crossings = np.sum(librosa.zero_crossings(y))
+    # duration = librosa.get_duration(y=y, sr=sr)
+    # max_amplitude = np.max(np.abs(y))
+    return mfcc.flatten() #[energy, zero_crossings, duration, max_amplitude]
 
 # Load data for training
 def load_data(data_dir):
@@ -57,16 +61,16 @@ def load_data(data_dir):
             X.append(features)
             y.append("clap")
 
-    # Iterate over each audio file in the snap_sounds directory
-    snap_dir = os.path.join(data_dir, "snap_sounds")
-    for filename in os.listdir(snap_dir):
+    # Iterate over each audio file in the tap_sounds directory
+    tap_dir = os.path.join(data_dir, "tap_sounds")
+    for filename in os.listdir(tap_dir):
         if filename.endswith(".wav"):
-            audio_file = os.path.join(snap_dir, filename)
+            audio_file = os.path.join(tap_dir, filename)
             features = extract_features(audio_file)
             X.append(features)
-            y.append("snap")
+            y.append("tap")
 
-    # Iterate over each audio file in the no sounds directory
+    # Iterate over each audio file in the no_sounds directory
     no_dir = os.path.join(data_dir, "no_sounds")
     for filename in os.listdir(no_dir):
         if filename.endswith(".wav"):
@@ -76,59 +80,6 @@ def load_data(data_dir):
             y.append("no_sound")
 
     return X, y
-
-# Train the model
-def train_model(data_dir):
-    # Load data
-    X, y = load_data(data_dir)
-
-    # Split data into train and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.5, random_state=42)
-
-    # Initialize and train model
-    clf = RandomForestClassifier()
-    clf.fit(X_train, y_train)
-
-    evaluate_model(X_test, y_test, clf)
-
-    # Evaluate model
-    y_pred = clf.predict(X_test)
-    accuracy = accuracy_score(y_test, y_pred)
-
-    return clf
-
-
-# Function to evaluate model
-def evaluate_model(X_test, y_test, model):
-    # Predict the labels for test data
-    y_pred = model.predict(X_test)
-    # Calculate accuracy
-    accuracy = accuracy_score(y_test, y_pred)
-    # Calculate precision
-    precision = precision_score(y_test, y_pred, average='weighted')
-    # Calculate recall
-    recall = recall_score(y_test, y_pred, average='weighted')
-    # Calculate F1-score
-    f1 = f1_score(y_test, y_pred, average='weighted')
-    
-    # Print the evaluation metrics
-    print("Accuracy:", accuracy)
-    print("Precision:", precision)
-    print("Recall:", recall)
-    print("F1-score:", f1)
-
-
-# Example usage:
-# Assuming X_test and y_test are the test features and labels respectively
-# model is the trained RandomForestClassifier model
-# You can replace them with your actual test data and model
-
-# X_test, y_test = ...  # Load your test data
-# model = ...  # Your trained model
-
-# Evaluate the model
-# evaluate_model(X_test, y_test, model)
-
 
 # Function to classify a new sound and count the number of snaps or claps
 def count_snaps_or_claps(audio_file, model):
@@ -147,7 +98,7 @@ def count_snaps_or_claps(audio_file, model):
     threshold = 0.5 * np.max(onset_env)
     # Find peaks in onset envelope
     peaks = librosa.util.peak_pick(onset_env, pre_max=20, post_max=20, pre_avg=75, post_avg=75, delta=threshold, wait=20)
-    # print("#peaks ", peaks, " prediction ", prediction)
+    print("#peaks ", peaks, " prediction ", prediction)
     # Iterate over peaks and classify each one
     for peak in peaks:
         # Extract features for the current peak
@@ -164,26 +115,44 @@ def count_snaps_or_claps(audio_file, model):
     return snap_count, clap_count
 
 
+
+# Train the model
+def train_model(data_dir):
+    # Load data
+    X, y = load_data(data_dir)
+
+    print(" X ", X)
+    print(" y ", y)
+
+    # Split data into train and test sets
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Initialize and train model
+    clf = RandomForestClassifier()
+    clf.fit(X_train, y_train)
+
+    # Evaluate model
+    y_pred = clf.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    print(f"Model accuracy: {accuracy}")
+
+    return clf
+
 # Function to classify a new sound and perform corresponding action
 def classify_and_execute(audio_file, model):
-    # Count snaps or claps
-    snap_count, clap_count = count_snaps_or_claps(audio_file, model)
-
-    # Perform action based on snap and clap counts
-    if snap_count > 0:
-        print(f'{snap_count} snap(s) detected! Performing action for snaps...')
-        determineActionForSnaps(snap_count)
-        # Code to perform action for snap sound (e.g., open application)
-    if clap_count > 0:
-        print(f'{clap_count} clap(s) detected! Performing action for claps...')
-        determineActionForClaps(clap_count)
+    # Extract features from the new sound
+    features = extract_features(audio_file)
+    # Predict class using the trained model
+    prediction = model.predict([features])[0]
+    # Perform action based on the predicted class
+    if prediction == 'tap':
+        print('Tap sound detected! Performing action...')
+        # Code to perform action for tap sound (e.g., open application)
+    elif prediction == 'clap':
+        print('Clap sound detected! Performing action...')
         # Code to perform action for clap sound
-    if snap_count == 0 and clap_count == 0:
-        print('No snap or clap sound detected.')
-
-
-
-
+    else:
+        print('Unknown sound detected.')
 
 def determineActionForClaps(clap_count):
     if clap_count == 1:
@@ -210,7 +179,7 @@ def determineActionForClaps(clap_count):
         pass
 
 
-def determineActionForSnaps(snap_count):
+def determineActionForsnaps(snap_count):
     if snap_count == 1:
         print("Open Siri")
         # Open Siri
@@ -233,7 +202,7 @@ def determineActionForSnaps(snap_count):
         subprocess.run(['pmset', 'displaysleepnow'])
 
 
-    
+
 # Paths to the directory containing training data and the new sound to classify
 data_dir = './data/'
 
