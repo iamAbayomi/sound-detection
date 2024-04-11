@@ -34,6 +34,8 @@ def record_sound(duration, sample_rate, channels, file_name):
 # Function to extract features from audio waveform
 def extract_features(audio_file):
     y, sr = librosa.load(audio_file)
+    # mfcc = librosa.feature.mfcc(y=y, sr=sr, n_fft=65536, win_length=65536, hop_length=len(y))
+    # print(mfcc.shape)
     energy = np.sum(np.abs(y))
     zero_crossings = np.sum(librosa.zero_crossings(y))
     duration = librosa.get_duration(y=y, sr=sr)
@@ -115,6 +117,8 @@ def count_snaps_or_claps(audio_file, model):
     for peak in peaks:
         # Extract features for the current peak
         peak_features = [energy, zero_crossings, duration, max_amplitude] = extract_features(audio_file)
+
+        # peak_features = extract_features(audio_file)
         # Predict class using the trained model
         peak_prediction = model.predict([peak_features])[0]
         # Increment snap or clap count based on the predicted class
@@ -194,7 +198,7 @@ def determineActionForsnaps(snap_count):
 data_dir = './data/'
 
 # Record a new sound
-duration = 5  # Duration of recording in seconds
+duration = 2  # Duration of recording in seconds
 sample_rate = 44100  # Sampling rate
 channels = 1  # Mono audio
 
