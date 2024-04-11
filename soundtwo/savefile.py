@@ -22,7 +22,7 @@ num = current_number + 1
 
 
 # Specify the directory where you want to save the recorded file
-save_dir = "./data/no_sounds/" 
+save_dir = "./data/random_sounds/" 
 
 # Ensure the specified directory exists, create it if necessary
 os.makedirs(save_dir, exist_ok=True)
@@ -39,7 +39,7 @@ print(f"Recording for {duration} seconds...")
 audio_data = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=channels, dtype='float32')
 sd.wait()
 
-name = "tap" + str(num) + ".wav"
+name = "random" + str(num) + ".wav"
 # Construct the full file path including the directory and file name
 file_name = os.path.join(save_dir, name)
 
